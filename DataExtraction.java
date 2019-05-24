@@ -1,5 +1,3 @@
-package data_create;
-
 /**
  * @author Markus Hoffmann
  * @contact Markus.Hoffmann@campus.lmu.de
