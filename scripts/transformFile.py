@@ -34,7 +34,7 @@ def transformGenExpr(inPath, outPath):
         fileCounter = fileCounter + 1
 
     outFile = open(outPath, 'w')
-    outFile.write("id" + "\t" + '\t'.join(id))
+    outFile.write("\t" + '\t'.join(id))
     outFile.write("\n")
     for key in mapOfColumns:
         outFile.write(key + "\t")
@@ -51,23 +51,25 @@ def transformMIRNAExpr(inPath, mappingPath, outPath):
 
     for inFile in files:
         filename = inFile.split(".")[0].split("_")[1]
-        columnData = []
+        columnData = {}
         f = open(inPath + inFile, 'r')
         for line in f:
             b = line.split('\t')
             if len(b) >= 2:
-                if b[0].rstrip() in uniqId.keys():
-                    columnData.append(b[1].rstrip())
-                else:
-                    columnData.append(0)
-            else:
-                # Row data is too short
-                columnData.append('Error')
+                columnData[b[0].rstrip()] = b[1].rstrip()
         f.close()
-        mapOfColumns[filename] = columnData
+
+        result = []
+        #get only needed data:
+        for key in uniqId:
+            if key in columnData.keys():
+                result.append(columnData.get(key))
+            else:
+                result.append(0)
+        mapOfColumns[filename] = result
 
     outFile = open(outPath, 'w')
-    outFile.write("id" + "\t" + '\t'.join(mapping.get(key) for key in uniqId.keys()))
+    outFile.write("\t" + '\t'.join(mapping.get(key) for key in uniqId))
     outFile.write("\n")
     for key in mapOfColumns:
         outFile.write(key + "\t")
@@ -89,7 +91,7 @@ def getUniqMirna(inPath):
         f.close()
 
     #filter mirna, that is <20 times in the data found
-    return {k: v for k, v in uniqId.items() if v > 20}
+    return [k for k, v in uniqId.items() if v > 20]
 
 def getMapping(uniqMirna, mappingPath):
     mappingMap = {}
@@ -107,8 +109,8 @@ def getMapping(uniqMirna, mappingPath):
 ########################################################################################################################
 #Methodenaufrufe
 ########################################################################################################################
-#transformGenExpr(inDir, out)
-transformMIRNAExpr(inDir, mappingFile,out)
+transformGenExpr(inDir, out)
+#transformMIRNAExpr(inDir, mappingFile,out)
 
 
 

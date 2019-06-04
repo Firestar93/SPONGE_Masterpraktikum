@@ -1,5 +1,4 @@
 library("data.table")
-library("tidyr")
 library("gridExtra")
 library("ggrepel")
 library("visNetwork")
@@ -7,13 +6,14 @@ library("ggplot2")
 library("SPONGE")
 
 #gene expression
-genes <- fread("C:\\Users\\Elly\\Dropbox\\Uni\\Master\\2._Semester\\NEAP\\data\\short_genes_expr.tsv", header = T)
+genes <- fread("C:\\Users\\Elly\\Dropbox\\Uni\\Master\\2._Semester\\NEAP\\data\\GSE110907\\tumour_gene_expr.tsv", header = T)
+#genes <- fread("C:\\Users\\Elly\\Dropbox\\Uni\\Master\\2._Semester\\NEAP\\data\\ICGC\\filtered_genes_expr.tsv", header = T)
 genes <- data.frame(genes[,-1], row.names=genes$V1)
 gene_matrix <- as.matrix(genes)
 
 #mirna expression
-mirna <- fread("C:\\Users\\Elly\\Dropbox\\Uni\\Master\\2._Semester\\NEAP\\data\\short_miRNA_expr.tsv", header = T)
-mirna <- data.frame(mirna[,-1], row.names=mirna$V1)
+mirna <- read.table("C:\\Users\\Elly\\Dropbox\\Uni\\Master\\2._Semester\\NEAP\\data\\GSE110907\\tumour_mirna_expr.tsv", header = T)
+#mirna <- read.table("C:\\Users\\Elly\\Dropbox\\Uni\\Master\\2._Semester\\NEAP\\data\\ICGC\\filtered_miRNA_expr.tsv", header = T)
 mirna_matrix <- as.matrix(mirna)
 
 load("C:\\Users\\Elly\\Dropbox\\Uni\\Master\\2._Semester\\NEAP\\data\\targetscan.RData")
@@ -22,8 +22,8 @@ load("C:\\Users\\Elly\\Dropbox\\Uni\\Master\\2._Semester\\NEAP\\data\\targetscan
 #apply step A of the SPONGE workflow
 #######################################################################
 genes_miRNA_candidates <- sponge_gene_miRNA_interaction_filter(
-         gene_expr = gene_matrix,
-         mir_expr = mirna_matrix,
+         gene_expr = gene_matrix[,1:10],
+         mir_expr = mirna_matrix[,1:10],
          mir_predicted_targets = targetscan_ensg,
          coefficient.threshold = 0)
 
